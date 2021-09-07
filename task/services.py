@@ -1,5 +1,3 @@
-import random
-
 from flask import abort
 
 from task import models, db, cache
@@ -27,7 +25,7 @@ def create_review(product_id, review_args):
     db.session.add(review)
     db.session.commit()
 
-    # clear cache
+    # Clear cache
     cache.delete_memoized(get_product)
 
     return {
@@ -57,7 +55,6 @@ def _get_product_with_review_pagination_json(product, reviews):
                'next_num': _get_next_page(reviews, product.id),
                'prev_num': _get_perv_page(reviews, product.id),
                'limit': reviews.per_page,
-               'number': random.randint(1, 10000)
            }, 200
 
 
