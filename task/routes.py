@@ -3,10 +3,15 @@ from flask_restful import Resource, reqparse
 from task import api
 from .services import get_product, create_review
 
+# constants for pagination reviews
+START_PAGE = 1
+COUNT_REVIEWS = 5
+
 # Parsing of arguments for pagination reviews
 review_paginator_args = reqparse.RequestParser()
-review_paginator_args.add_argument('page', type=int, help='current reviews page, need int', default=1)
-review_paginator_args.add_argument('per_page', type=int, help='number of reviews per page, need int', default=5)
+review_paginator_args.add_argument('page', type=int, help='current reviews page, need int', default=START_PAGE)
+review_paginator_args.add_argument('per_page', type=int, help='number of reviews per page, need int',
+                                   default=COUNT_REVIEWS)
 
 # Parsing of arguments for create review of product
 review_put_args = reqparse.RequestParser()

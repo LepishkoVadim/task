@@ -1,6 +1,20 @@
+import random
+
 from flask import abort
 
-from task import models, db
+from task import models, db, cache
+
+
+@cache.memoize()
+def get_product(product_id, review_paginator):
+    """Get product from id and create paginator"""
+
+    product = _get_product_from_id(product_id)
+
+    reviews = models.Review.query.filter_by(asin=product.asin).paginate(page=review_paginator.page,
+                                                                        per_page=review_paginator.per_page)
+
+    return _get_product_with_review_pagination_json(product, reviews)
 
 
 def create_review(product_id, review_args):
@@ -12,20 +26,13 @@ def create_review(product_id, review_args):
     review = models.Review(title=review_args.title, review=review_args.review, asin=product.asin)
     db.session.add(review)
     db.session.commit()
+
+    # clear cache
+    cache.delete_memoized(get_product)
+
     return {
                'message': 'success'
            }, 201
-
-
-def get_product(product_id, review_paginator):
-    """Get product from id and create paginator"""
-
-    product = _get_product_from_id(product_id)
-
-    reviews = models.Review.query.filter_by(asin=product.asin).paginate(page=review_paginator.page,
-                                                                        per_page=review_paginator.per_page)
-
-    return _get_product_with_review_pagination_json(product, reviews)
 
 
 def _get_product_from_id(product_id):
@@ -50,6 +57,7 @@ def _get_product_with_review_pagination_json(product, reviews):
                'next_num': _get_next_page(reviews, product.id),
                'prev_num': _get_perv_page(reviews, product.id),
                'limit': reviews.per_page,
+               'number': random.randint(1, 10000)
            }, 200
 
 
