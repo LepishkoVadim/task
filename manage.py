@@ -1,4 +1,5 @@
 import dotenv
+
 from task import app
 
 dotenv.load_dotenv('.env')

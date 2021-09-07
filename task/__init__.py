@@ -1,15 +1,19 @@
 import os
+
 from flask import Flask
 from flask_migrate import Migrate
+from flask_rest_paginate import Pagination
 from flask_sqlalchemy import SQLAlchemy
+from flask_restful import Api
 
-# create and config app
+# Create and config app
 app = Flask(__name__)
 app.config.from_object(os.getenv('CONFIG'))
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# register flask extensions
+# Register flask extensions
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+api = Api(app)
+pagination = Pagination(app, db)
 
-from task import models, commands
+from task import models, commands, routes, services
